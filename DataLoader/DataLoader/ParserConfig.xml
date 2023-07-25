@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ParserConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Cleanup>
+    <LineParser>
+      <ParseOrder>0</ParseOrder>
+      <SingleElement>false</SingleElement>
+      <RegEx>^\r\n</RegEx>
+    </LineParser>
+    <LineParser>
+      <ParseOrder>1</ParseOrder>
+      <SingleElement>true</SingleElement>
+      <RegEx>\r</RegEx>
+    </LineParser>
+  </Cleanup>
+  <SectionMarker>-{32}\r\n</SectionMarker>
+  <SectionParsers>
+    <ArrayOfLineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Table=2,Check=4,Guest=6</ItemIndex>
+        <RegEx>(Tbl )(\d*/\d*) *(Fct )(\d*) *(Cts )(\d*)</RegEx>
+        <PropertyName>Table</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>ServerNumber=1,Server=4,Establishment=5</ItemIndex>
+        <RegEx>(\d+) ((Maitre D'Hotel|(\w+ )+))  *(\w*)\r\n</RegEx>
+        <PropertyName>Server</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>1</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>ServerNumber=1,CC=2,TC=3</ItemIndex>
+        <RegEx>CE: *(\d*) CC: *(\d*) TC: *(\d*)</RegEx>
+        <PropertyName>Server</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>2</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Transaction=1,TicketTime=2</ItemIndex>
+        <RegEx>Trn (\d*) *(\d*\w*'\d* \d*:\d*)</RegEx>
+        <PropertyName>Server</PropertyName>
+      </LineParser>
+    </ArrayOfLineParser>
+    <ArrayOfLineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>TVAAmount=1,TVAPercent=3,TVATotal=4</ItemIndex>
+        <RegEx>(\d*.\d*) (T\.V\.A\.).(\d+)% +(\d*.\d*)</RegEx>
+        <PropertyName>TAVData</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>TipAmount=2</ItemIndex>
+        <RegEx>(Tips) +(\d*.\d*)</RegEx>
+        <PropertyName>TipData</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Total=2</ItemIndex>
+        <RegEx>.*(Sous Total|Total du|Front Full) *(\d+.\d+-|\d*.\d*)</RegEx>
+        <PropertyName>CheckTotal</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>AcountNumber=5,CustomerName=2,PaymentType=1,Payment=7</ItemIndex>
+        <RegEx>(Facture Ajoutee)\r\n(Tbl (\d+)/(\d+)) (Fct (\d+)) *(\d+.\d+-|\d+.\d+)</RegEx>
+        <PropertyName>PaymentData</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>AcountNumber=5,CustomerName=2,PaymentType=1,Payment=7</ItemIndex>
+        <RegEx>(Tbl (\d+)/(\d+)) (Fct (\d+)) *(\d+.\d+-|\d+.\d+)</RegEx>
+        <PropertyName>PaymentData</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>AcountNumber=1,PaymentType=2,Payment=3</ItemIndex>
+        <RegEx> *(\d+/Micros) *\r\n +(\w+) *(\d*.\d*)</RegEx>
+        <PropertyName>PaymentData</PropertyName>
+      </LineParser>  
+      <LineParser>
+        <ParseOrder>0</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>PaymentType=1,AcountNumber=2,Payment=3</ItemIndex>
+        <RegEx> *(\d+ *%)\r\n(.*Associate|.*Full) *(\d+.\d+-|\d*.\d*)</RegEx>
+        <PropertyName>PaymentData</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>1</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Quantity=1,Description=2,Price=3</ItemIndex>
+        <RegEx>(\d+) +(.*) (\d+\.\d+)\r\n</RegEx>
+        <PropertyName>LineItem</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>2</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Quantity=1,Description=2,Price=3,Credit=4</ItemIndex>
+        <RegEx>(\d+) +(.*) (\d+\.\d+)([-C|-].)\r\n</RegEx>
+        <PropertyName>LineItem</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>3</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Quantity=1,Description=2,Price=3,Modifier=4</ItemIndex>
+        <RegEx>(\d+) +(.*) (\d+\.\d+)\r\n +(\D+)</RegEx>
+        <PropertyName>LineItem</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>4</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Quantity=1,Description=2,Price=3,Credit=4,Modifier=5</ItemIndex>
+        <RegEx>(\d+) +(.*) (\d+\.\d+)([-C|-].)\r\n +(\D+)</RegEx>
+        <PropertyName>LineItem</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>5</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>AcountNumber=1,RoomNumber=2,CustomerName=3,PaymentType=4,Payment=5</ItemIndex>
+        <RegEx> *(\d+) *\r\n *(\d+)/(.+) *\r\n *(.*) (\d*.\d*)</RegEx>
+        <PropertyName>PaymentData</PropertyName>
+      </LineParser>
+      <LineParser>
+        <ParseOrder>2</ParseOrder>
+        <SingleElement>false</SingleElement>
+        <ItemIndex>Quantity=3,Description=5</ItemIndex>
+        <RegEx>(\((\d*)\) )*((\d+)) (\w.+)\r\n*</RegEx>
+        <PropertyName>LineItem</PropertyName>
+      </LineParser>
+    </ArrayOfLineParser>
+  </SectionParsers>
+  <DateFormat></DateFormat>
+  <TransactionTypes>
+    <TransactionElements>
+      <TransactionType>1</TransactionType>
+      <TextIdentifier>MINIBAR LOST</TextIdentifier>
+    </TransactionElements>
+    <TransactionElements>
+      <TransactionType>2</TransactionType>
+      <TextIdentifier>.*AMENITIES.*\n.*(\d+ *%)\n.*Front Full</TextIdentifier>
+    </TransactionElements>
+  </TransactionTypes>
+</ParserConfig>

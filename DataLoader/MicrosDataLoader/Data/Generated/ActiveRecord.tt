@@ -1,0 +1,838 @@
+<#@ include file="SQLServer.ttinclude" #>
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using SubSonic.DataProviders;
+using SubSonic.Extensions;
+using System.Linq.Expressions;
+using SubSonic.Schema;
+using System.Collections;
+using SubSonic;
+using SubSonic.Repository;
+using System.ComponentModel;
+using System.Data.Common;
+using SubSonic.SqlGeneration.Schema;
+
+namespace <#=Namespace #>
+{
+	public interface IWCFDataElement
+	{
+		IBaseDataObject CreateDBObject( );
+	}
+
+    public interface ICallOnCreated
+    {
+        void CallOnCreated( bool _CallOnCreated);
+    }
+
+    public static class ActiveRecordExtensions
+    {
+        public static T SingleOrDefault<T>( this IRepository<T> _repo, Expression<Func<T, bool>> expression ) where T : IActiveRecord
+        {
+            var results = _repo.Find( expression );
+            T single = default( T );
+            foreach ( T i in results )
+            {
+                single = i;
+                single.SetIsLoaded( true );
+                single.SetIsNew( false );
+                break;
+            }
+            return single;
+        }
+    }
+
+	public interface IBaseDataObject
+	{
+        bool IsNew();
+        void SetIsNew(bool isNew);
+        bool IsLoaded();
+		void Save( );
+	}
+
+    public abstract class BaseDataObject<T> : IBaseDataObject where T : class, new( )
+    {
+        protected ITable tbl;
+        protected bool _isNew;
+
+        protected T m_Internal = default(T);
+
+        public T GetInternalData( )
+        {
+            return m_Internal;
+        }
+    
+
+        public bool IsNew()
+        {
+            return _isNew;
+        }
+        
+        public void SetIsNew(bool isNew)
+        {
+            _isNew=isNew;
+        }
+
+        protected bool _isLoaded;
+        public bool IsLoaded()
+        {
+            return _isLoaded;
+        }
+                
+        protected List<IColumn> _dirtyColumns;
+        public bool IsDirty()
+        {
+            return _dirtyColumns.Count>0;
+        }
+        
+        public List<IColumn> GetDirtyColumns ()
+        {
+            return _dirtyColumns;
+        }
+
+        public IList<IColumn> Columns
+        {
+            get
+            {
+                return tbl.Columns;
+            }
+        }
+
+		public abstract void Save( );
+
+    }
+
+
+<#
+
+    var tables = LoadTables();
+
+    foreach(Table tbl in tables)
+    {
+        if(!ExcludeTables.Contains(tbl.Name))
+        {
+#>
+
+    [DataContract]
+    public partial class Data<#=tbl.ClassName#> : IWCFDataElement
+    {
+<#
+            foreach(Column col in tbl.Columns)
+            {
+                if (tbl.ClassName == col.CleanName)
+                {
+                    col.CleanName += "X";
+                }
+#>        [DataMember]
+<# 
+            if( tbl.PK.CleanName == col.CleanName )
+            { #>
+        public <#=col.SysType #> <#=col.CleanName #> { get; set; }
+<#          }
+            else
+            { #>
+        public <#=col.SysType #><#=CheckNullable(col)#> <#=col.CleanName #> { get; set; }
+<#          } #>
+<#
+            }
+#>
+
+        public void Copy( Data<#=tbl.ClassName#> _Item )
+        {
+<#
+            foreach(Column col in tbl.Columns)
+            {
+                if (tbl.ClassName == col.CleanName)
+                {
+                    col.CleanName += "X";
+                }
+                if(col.CleanName != tbl.PK.CleanName)
+                {
+#>             <#=col.CleanName #> = _Item.<#=col.CleanName #>;			
+<#
+                }
+            }
+#>        }
+
+		public IBaseDataObject CreateDBObject( )
+        {
+            return new <#=tbl.ClassName#>( this );
+        }
+
+
+    }
+
+
+    /// <summary>
+    /// A class which represents the <#=tbl.Name #> table in the <#=DatabaseName#> Database.
+    /// </summary>
+    public partial class <#=tbl.ClassName#>: BaseDataObject<Data<#=tbl.ClassName#>>, IActiveRecord, ICallOnCreated
+    {
+        #region Built-in testing
+        [NonSerialized]
+        static TestRepository<<#=tbl.ClassName#>> _testRepo;
+       
+        static void SetTestRepo()
+        {
+            _testRepo = _testRepo ?? new TestRepository<<#=tbl.ClassName#>>(new <#=Namespace#>.<#=DatabaseName#>DB());
+        }
+
+        public static void ResetTestRepo()
+        {
+            _testRepo = null;
+            SetTestRepo();
+        }
+
+        public static void Setup(List<<#=tbl.ClassName#>> testlist)
+        {
+            SetTestRepo();
+            foreach (var item in testlist)
+            {
+                _testRepo._items.Add(item);
+            }
+        }
+
+        public static void Setup(<#=tbl.ClassName#> item) 
+        {
+            SetTestRepo();
+            _testRepo._items.Add(item);
+        }
+
+        public static void Setup(int testItems) 
+        {
+            SetTestRepo();
+            for(int i=0;i<testItems;i++)
+            {
+                <#=tbl.ClassName#> item=new <#=tbl.ClassName#>();
+                _testRepo._items.Add(item);
+            }
+        }
+        
+        public bool TestMode = false;
+        #endregion
+
+        IRepository<<#=tbl.ClassName#>> _repo;
+
+        partial void OnCreated();
+            
+        partial void OnLoaded();
+        
+        partial void OnSaving();
+        
+        partial void OnSaved();
+        
+        partial void OnChanged();
+
+        public void SetIsLoaded(bool isLoaded)
+        {
+            _isLoaded=isLoaded;
+            if(isLoaded)
+                OnLoaded();
+        }
+        
+        <#=Namespace#>.<#=DatabaseName#>DB _db;
+        
+        public <#=tbl.ClassName#>()
+        {
+            m_Internal = new Data<#=tbl.ClassName#>();
+             _db=new <#=Namespace#>.<#=DatabaseName#>DB();
+            Init();   
+<#			if(tbl.PK.SysType=="Guid"){#>
+            this.<#=tbl.PK.CleanName#> = Guid.NewGuid( );     
+<#			}#>        }
+
+        ///<summary>
+        ///Set bool to true to assign NewGuid to PrimaryKey (if appropriate) and to call OnCreated
+        ///</summary>
+        public <#=tbl.ClassName#>( bool _CallOnCreated )
+        {
+            m_Internal = new Data<#=tbl.ClassName#>();
+            _db=new <#=Namespace#>.<#=DatabaseName#>DB();
+            Init();  
+            CallOnCreated( _CallOnCreated );
+        }
+
+        public <#=tbl.ClassName#>(string connectionString, string providerName) 
+        {
+            m_Internal = new Data<#=tbl.ClassName#>();
+            _db=new <#=Namespace#>.<#=DatabaseName#>DB(connectionString, providerName);
+            Init();            
+<#			if(tbl.PK.SysType=="Guid"){#>
+            this.<#=tbl.PK.CleanName#> = Guid.NewGuid( );     
+<#			}#>        }
+
+        public <#=tbl.ClassName#>( <#=tbl.ClassName#> _Item )
+        {
+            m_Internal = new Data<#=tbl.ClassName#>();
+            Copy( _Item );
+            _db=new <#=Namespace#>.<#=DatabaseName#>DB();
+            Init();            
+        }
+
+        public <#=tbl.ClassName#>( Data<#=tbl.ClassName#> _Item )
+        {
+            m_Internal.Copy( _Item );
+            _db=new <#=Namespace#>.<#=DatabaseName#>DB();
+            Init();            
+        }         
+         
+        public void Copy( <#=tbl.ClassName#> _Item )
+        {
+<#
+            foreach(Column col in tbl.Columns)
+            {
+                if (tbl.ClassName == col.CleanName)
+                {
+                    col.CleanName += "X";
+                }
+                if(col.CleanName != tbl.PK.CleanName)
+                {
+#>
+            m_Internal.<#=col.CleanName #> = _Item.<#=col.CleanName #>;			
+<#
+                }
+            }
+#>
+        }         
+
+        public void CallOnCreated( bool _CallOnCreated )
+        {
+            if( _CallOnCreated )
+            {
+<#			if(tbl.PK.SysType=="Guid"){#>
+                m_Internal.<#=tbl.PK.CleanName#> = Guid.NewGuid( );     
+<#			}#>	
+                OnCreated( );
+            }
+        }
+         
+        void Init()
+        {
+            TestMode=this._db.DataProvider.ConnectionString.Equals("test", StringComparison.InvariantCultureIgnoreCase);
+            _dirtyColumns=new List<IColumn>();
+            if(TestMode)
+            {
+                <#=tbl.ClassName#>.SetTestRepo();
+                _repo=_testRepo;
+            }
+            else
+            {
+                _repo = new SubSonicRepository<<#=tbl.ClassName#>>(_db);
+            }
+            tbl=_repo.GetTable();
+            SetIsNew(true);
+        }
+
+        public <#=tbl.ClassName#>(Expression<Func<<#=tbl.ClassName#>, bool>> expression):this() 
+        {
+            SetIsLoaded(_repo.Load(this,expression));
+        }
+        
+        internal static IRepository<<#=tbl.ClassName#>> GetRepo(string connectionString, string providerName)
+        {
+            <#=Namespace#>.<#=DatabaseName#>DB db;
+
+            db = String.IsNullOrEmpty(connectionString) ? new <#=Namespace#>.<#=DatabaseName#>DB() : new <#=Namespace#>.<#=DatabaseName#>DB(connectionString, providerName);
+
+            /*
+            if(String.IsNullOrEmpty(connectionString))
+            {
+                db=new <#=Namespace#>.<#=DatabaseName#>DB();
+            }
+            else
+            {
+                db=new <#=Namespace#>.<#=DatabaseName#>DB(connectionString, providerName);
+            }
+            */
+
+            IRepository<<#=tbl.ClassName#>> _repo;
+            
+            if(db.TestMode)
+            {
+                <#=tbl.ClassName#>.SetTestRepo();
+                _repo=_testRepo;
+            }
+            else
+            {
+                _repo = new SubSonicRepository<<#=tbl.ClassName#>>(db);
+            }
+            return _repo;        
+        }       
+        
+        internal static IRepository<<#=tbl.ClassName#>> GetRepo()
+        {
+            return GetRepo("","");
+        }
+        
+        public static <#=tbl.ClassName#> SingleOrDefault(Expression<Func<<#=tbl.ClassName#>, bool>> expression) 
+        {
+            return SingleOrDefault( expression, String.Empty, String.Empty );
+        }      
+        
+        public static <#=tbl.ClassName#> SingleOrDefault(Expression<Func<<#=tbl.ClassName#>, bool>> expression,string connectionString, string providerName) 
+        {
+            IRepository<<#=tbl.ClassName#>> repo = GetRepo(connectionString,providerName);
+            <#=tbl.ClassName#> single = repo.SingleOrDefault<<#=tbl.ClassName#>>( expression );
+            if( null != single )
+            {
+                single.OnLoaded( );
+            }
+            return single;
+        }
+        
+        public static bool Exists(Expression<Func<<#=tbl.ClassName#>, bool>> expression,string connectionString, string providerName) 
+        {
+            return All(connectionString,providerName).Any(expression);
+        }        
+        
+        public static bool Exists(Expression<Func<<#=tbl.ClassName#>, bool>> expression) 
+        {
+            return All().Any(expression);
+        }        
+
+<#			if(tbl.PK.SysType=="Guid"){#>
+        protected static bool IsEmpty<#=tbl.ClassName#>Loaded = false;
+        protected static <#=tbl.ClassName#> Empty<#=tbl.ClassName#>Member = null;
+
+        public static <#=tbl.ClassName#> GetByID(<#=tbl.PK.SysType#>? value) 
+        {
+            <#=tbl.ClassName#> rc = null;
+            if( value.HasValue )
+            {
+                rc = GetByID( value.Value );
+            }
+            return rc;
+        }
+<#			}#>
+        
+        public static <#=tbl.ClassName#> GetByID(<#=tbl.PK.SysType#> value) 
+        {
+<#			if(tbl.PK.SysType=="Guid"){#>
+            <#=tbl.ClassName#> rc = null;
+            if( null != value )
+            {
+                if( value == Guid.Empty )
+                {
+                    if( true == IsEmpty<#=tbl.ClassName#>Loaded )
+                    {
+                        rc = Empty<#=tbl.ClassName#>Member;
+                    }
+                    else
+                    {
+                        IsEmpty<#=tbl.ClassName#>Loaded = true;
+                        rc = <#=tbl.ClassName#>.Find( L => L.<#=tbl.PK.CleanName #>.Equals( value ) ).FirstOrDefault( );
+                        Empty<#=tbl.ClassName#>Member = rc;
+                    }
+                }
+                else
+                {
+                    rc = <#=tbl.ClassName#>.Find( L => L.<#=tbl.PK.CleanName #>.Equals( value ) ).FirstOrDefault( );
+                } 
+            }
+            return rc;
+<#			}
+            else{#>
+            return <#=tbl.ClassName#>.Find( L => L.<#=tbl.PK.CleanName #>.Equals( value ) ).FirstOrDefault( );
+<#			}#>
+        }
+
+        public static IList<<#=tbl.ClassName#>> Find(Expression<Func<<#=tbl.ClassName#>, bool>> expression) 
+        {
+            var repo = GetRepo();
+            return repo.Find(expression).ToList();
+        }
+        
+        public static IList<<#=tbl.ClassName#>> Find(Expression<Func<<#=tbl.ClassName#>, bool>> expression,string connectionString, string providerName) 
+        {
+            var repo = GetRepo(connectionString,providerName);
+            return repo.Find(expression).ToList();
+        }
+
+        public static IQueryable<<#=tbl.ClassName#>> All(string connectionString, string providerName) 
+        {
+            return GetRepo(connectionString,providerName).GetAll();
+        }
+
+        public static IQueryable<<#=tbl.ClassName#>> All() 
+        {
+            return GetRepo().GetAll();
+        }
+        
+        public static PagedList<<#=tbl.ClassName#>> GetPaged(string sortBy, int pageIndex, int pageSize,string connectionString, string providerName) 
+        {
+            return GetRepo(connectionString,providerName).GetPaged(sortBy, pageIndex, pageSize);
+        }
+      
+        public static PagedList<<#=tbl.ClassName#>> GetPaged(string sortBy, int pageIndex, int pageSize) 
+        {
+            return GetRepo().GetPaged(sortBy, pageIndex, pageSize);
+        }
+
+        public static PagedList<<#=tbl.ClassName#>> GetPaged(int pageIndex, int pageSize,string connectionString, string providerName) 
+        {
+            return GetRepo(connectionString,providerName).GetPaged(pageIndex, pageSize);
+        }
+
+        public static PagedList<<#=tbl.ClassName#>> GetPaged(int pageIndex, int pageSize) 
+        {
+            return GetRepo().GetPaged(pageIndex, pageSize);
+        }
+
+        public string KeyName()
+        {
+            return "<#=tbl.PK.CleanName #>";
+        }
+
+        public object KeyValue()
+        {
+            return this.<#=tbl.PK.CleanName#>;
+        }
+        
+        public void SetKeyValue(object value) 
+        {
+            if (value != null && value!=DBNull.Value) 
+            {
+                var settable = value.ChangeTypeTo<<#=tbl.PK.SysType#>>();
+                this.GetType().GetProperty(this.KeyName()).SetValue(this, settable, null);
+            }
+        }
+        
+//        public override string ToString()
+//        {
+//			string rc = string.Empty;
+//			if( null != this.<#=tbl.Descriptor.CleanName #> )
+//			{
+//				rc = this.<#=tbl.Descriptor.CleanName #>.ToString();
+//			}
+//            return rc;
+//        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj == null)
+                return false;
+            if(obj is <#=tbl.ClassName#>)
+            {
+                <#=tbl.ClassName#> compare=(<#=tbl.ClassName#>)obj;
+                return compare.KeyValue().Equals( this.KeyValue() );
+                //return compare.KeyValue()==this.KeyValue();
+            }
+            else
+            {
+                return base.Equals(obj);
+            }
+        }
+
+<#      if(tbl.PK.SysType=="int"){#>
+        public override int GetHashCode() 
+        {
+            return this.<#=tbl.PK.CleanName #>;
+        }
+<#      }#>
+
+<#      if(tbl.PK.SysType=="Guid"){#>
+        public override int GetHashCode() 
+        {
+            return this.<#=tbl.PK.CleanName #>.GetHashCode( );
+        }
+<#      }#>
+
+        public string DescriptorValue()
+        {
+            return this.<#=tbl.Descriptor.CleanName #>.ToString();
+        }
+
+        public string DescriptorColumn() 
+        {
+            return "<#=tbl.Descriptor.CleanName #>";
+        }
+
+        public static string GetKeyColumn()
+        {
+            return "<#=tbl.PK.CleanName #>";
+        }        
+
+        public static string GetDescriptorColumn()
+        {
+            return "<#=tbl.Descriptor.CleanName #>";
+        }
+        
+        #region ' Foreign Keys '
+<#
+            List<string> fkCreated = new List<string>();
+            foreach(FKTable fk in tbl.FKTables)
+            { 
+                // Switched indicates that this table's key is another table's foreign key, a 1:many relationship.
+                // Not Switched indicates that this table's column is a foreign key, a 1:1 relationship.
+                if(!ExcludeTables.Contains(fk.OtherTable)){
+                    string propName=fk.OtherQueryable;
+                    if( !fk.Switched )
+                    {
+                        propName=fk.ConstraintNameSuffix;
+                    }
+                    if(fkCreated.Contains(propName))
+                    {
+                        propName=(fk.Switched ? fk.OtherQueryable : fk.OtherClass )+fkCreated.Count.ToString();
+                    }
+                    
+                    fkCreated.Add((fk.Switched ? fk.OtherQueryable : fk.OtherClass ));
+                    
+#>
+        public IQueryable<<#=fk.OtherClass #>> <#=propName #>
+        {
+            get
+            {
+                  var repo=<#=Namespace #>.<#=fk.OtherClass#>.GetRepo();
+                  return from items in repo.GetAll()
+                       where items.<#=CleanUp(fk.OtherColumn)#> == m_Internal.<#=CleanUp(fk.ThisColumn)#>
+                       select items;
+            }
+        }
+<#
+                }
+            }
+#>
+        #endregion
+
+<#			if(tbl.PK.SysType=="Guid"){#>
+
+		[ObfuscationAttribute(Exclude=true)]
+        public virtual <#=tbl.PK.SysType#> ObjectID 
+        {
+            get
+            {
+                return m_Internal.<#=tbl.PK.CleanName #>;
+            }
+            set
+            {
+                m_Internal.<#=tbl.PK.CleanName #> = value;
+            }
+        }
+<#			}#>
+
+
+<#
+            foreach(Column col in tbl.Columns)
+            {
+                if (tbl.ClassName == col.CleanName)
+                {
+                    col.CleanName += "X";
+                }
+#>
+//        <#=col.SysType #><#=CheckNullable(col)#> _<#=col.CleanName #>;
+<# 
+            if( tbl.PK.CleanName == col.CleanName )
+            { #>
+        [SubSonicPrimaryKey]
+<#          } #>        [LocalData]
+<# 
+            if( tbl.PK.CleanName == col.CleanName )
+            { #>
+        public <#=col.SysType #> <#=col.CleanName #>
+<#          }
+            else
+            { #>
+        public <#=col.SysType #><#=CheckNullable(col)#> <#=col.CleanName #>
+<#          } #>
+        {
+            get { return m_Internal.<#=col.CleanName #>; }
+            set
+            {
+                if(m_Internal.<#=col.CleanName #>!=value){
+                    m_Internal.<#=col.CleanName #>=value;
+                    var col=tbl.Columns.SingleOrDefault(x=>x.Name=="<#=col.Name #>");
+                    if(col!=null){
+                        if(!_dirtyColumns.Any(x=>x.Name==col.Name) && _isLoaded){
+                            _dirtyColumns.Add(col);
+                        }
+                    }
+                    OnChanged();
+                }
+            }
+        }
+
+<#
+            }
+#>
+
+        public DbCommand GetUpdateCommand() 
+        {
+            if(TestMode)
+                return _db.DataProvider.CreateCommand();
+            else
+                return this.ToUpdateQuery(_db.Provider).GetCommand().ToDbCommand();
+            
+        }
+
+        public DbCommand GetInsertCommand() 
+        {
+            if(TestMode)
+                return _db.DataProvider.CreateCommand();
+            else
+                return this.ToInsertQuery(_db.Provider).GetCommand().ToDbCommand();
+        }
+        
+        public DbCommand GetDeleteCommand() 
+        {
+            if(TestMode)
+                return _db.DataProvider.CreateCommand();
+            else
+                return this.ToDeleteQuery(_db.Provider).GetCommand().ToDbCommand();
+        }
+       
+        public void Update()
+        {
+            Update(_db.DataProvider);
+        }
+        
+        public void Update(IDataProvider provider)
+        {
+            OnSaving( );
+            
+            if(this._dirtyColumns.Count>0)
+            {
+                _repo.Update(this,provider);
+                _dirtyColumns.Clear();    
+            }
+            OnSaved();
+       }
+ 
+        public void Add()
+        {
+            Add(_db.DataProvider);
+        }
+        
+        public void Add(IDataProvider provider)
+        {
+            OnSaving( );
+
+            var key=KeyValue();
+            if(key==null)
+            {
+                var newKey=_repo.Add(this,provider);
+                this.SetKeyValue(newKey);
+            }
+            else
+            {
+                _repo.Add(this,provider);
+            }
+            SetIsNew(false);
+            OnSaved();
+        }
+        
+        public override void Save() 
+        {
+            Save(_db.DataProvider);
+        }      
+
+        public void Save(IDataProvider provider) 
+        {
+            if (_isNew) 
+            {
+                Add(provider);
+            }
+            else 
+            {
+                Update(provider);
+            }
+            SetIsLoaded( true );
+        }
+
+        public void Delete(IDataProvider provider) 
+        {
+            <#if(tbl.HasLogicalDelete()){#>
+             this.<#=tbl.DeleteColumn.CleanName#>=true;
+            _repo.Update(this,provider);
+            <#}else{#>       
+                 
+            _repo.Delete(KeyValue());
+            <#}#>
+        }
+
+        public void Delete() 
+        {
+            Delete(_db.DataProvider);
+        }
+
+        public static void Delete(Expression<Func<<#=tbl.ClassName#>, bool>> expression) 
+        {
+            var repo = GetRepo();
+            
+<#if(tbl.HasLogicalDelete()){#>
+            List<<#=tbl.ClassName#>> items=repo.GetAll().Where(expression).ToList();
+            items.ForEach(x=>x.<#=tbl.DeleteColumn.CleanName#>=true);
+            repo.Update(items);
+<#}else{#>       
+            repo.DeleteMany(expression);
+<#}#>
+        }
+
+        <#if(tbl.HasLogicalDelete()){#>
+        public static void Destroy(Func<<#=tbl.ClassName#>, bool> expression) 
+        {
+            var repo = GetRepo();
+            repo.Delete(expression);
+        }
+        
+        public static void Destroy(object key) 
+        {
+            var repo = GetRepo();
+            repo.Delete(key);
+        }
+        
+        public static void Destroy(object key, IDataProvider provider) 
+        {
+            var repo = GetRepo();
+            repo.Delete(key,provider);
+        }        
+        
+        public void Destroy() 
+        {
+            _repo.Delete(KeyValue());
+        }        
+
+        public void Destroy(IDataProvider provider) 
+        {
+            _repo.Delete(KeyValue(), provider);
+        }         
+        <#}#>
+
+        public void Load(IDataReader rdr) 
+        {
+            Load(rdr, true);
+        }
+
+        public void Load(IDataReader rdr, bool closeReader) 
+        {
+            if (rdr.Read()) 
+            {
+                try 
+                {
+                    rdr.Load(this);
+                    SetIsNew(false);
+                    SetIsLoaded(true);
+                }
+                catch
+                {
+                    SetIsLoaded(false);
+                    throw;
+                }
+            }
+            else
+            {
+                SetIsLoaded(false);
+            
+            }
+
+            if (closeReader)
+                rdr.Dispose();
+        }
+    } 
+<#        }
+    }
+#>
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="3c911b5c-7c0c-4d2f-83f8-9c3b8b14cda0" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8733/DataLoaderWCF/DataLoaderWCF/mex" Protocol="mex" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="b5c6ca73-6adc-4872-8988-fade9bfc76c3" SourceId="1" SourceUrl="http://localhost:8733/DataLoaderWCF/DataLoaderWCF/mex" />
+    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="f21238fa-0ef3-4de7-af90-02a38787f31c" SourceId="1" SourceUrl="http://localhost:8733/DataLoaderWCF/DataLoaderWCF/mex" />
+    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="0958a224-89a1-4430-ac05-abb236440d17" SourceId="1" SourceUrl="http://localhost:8733/DataLoaderWCF/DataLoaderWCF/mex" />
+    <MetadataFile FileName="Jaxis.Data.Service.xsd" MetadataType="Schema" ID="54f53083-0d8a-47cb-8965-504ac30cf790" SourceId="1" SourceUrl="http://localhost:8733/DataLoaderWCF/DataLoaderWCF/mex" />
+    <MetadataFile FileName="Jaxis.POS.Data.xsd" MetadataType="Schema" ID="6790a953-96e6-4a33-8085-b63b0c692986" SourceId="1" SourceUrl="http://localhost:8733/DataLoaderWCF/DataLoaderWCF/mex" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

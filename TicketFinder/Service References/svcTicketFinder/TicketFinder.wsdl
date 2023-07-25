@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="TicketFinder" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://192.168.10.216/TicketFinder/TicketFinderService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://192.168.10.216/TicketFinder/TicketFinderService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.10.216/TicketFinder/TicketFinderService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Jaxis.POS.Data" />
+      <xsd:import schemaLocation="http://192.168.10.216/TicketFinder/TicketFinderService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/TicketFinderService" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ITicketFinder_GetTimePeriods_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTimePeriods" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_GetTimePeriods_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTimePeriodsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_GetEstablisments_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetEstablisments" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_GetEstablisments_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetEstablismentsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_GetTicketData_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTicketData" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_GetTicketData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTicketDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_ValidateUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateUser" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_ValidateUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ValidateUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_SubmitFile_InputMessage">
+    <wsdl:part name="parameters" element="tns:SubmitFile" />
+  </wsdl:message>
+  <wsdl:message name="ITicketFinder_SubmitFile_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SubmitFileResponse" />
+  </wsdl:message>
+  <wsdl:portType name="ITicketFinder">
+    <wsdl:operation name="GetTimePeriods">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITicketFinder/GetTimePeriods" message="tns:ITicketFinder_GetTimePeriods_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITicketFinder/GetTimePeriodsResponse" message="tns:ITicketFinder_GetTimePeriods_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEstablisments">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITicketFinder/GetEstablisments" message="tns:ITicketFinder_GetEstablisments_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITicketFinder/GetEstablismentsResponse" message="tns:ITicketFinder_GetEstablisments_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketData">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITicketFinder/GetTicketData" message="tns:ITicketFinder_GetTicketData_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITicketFinder/GetTicketDataResponse" message="tns:ITicketFinder_GetTicketData_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ValidateUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITicketFinder/ValidateUser" message="tns:ITicketFinder_ValidateUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITicketFinder/ValidateUserResponse" message="tns:ITicketFinder_ValidateUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitFile">
+      <wsdl:input wsaw:Action="http://tempuri.org/ITicketFinder/SubmitFile" message="tns:ITicketFinder_SubmitFile_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ITicketFinder/SubmitFileResponse" message="tns:ITicketFinder_SubmitFile_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ITicketFinder" type="tns:ITicketFinder">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetTimePeriods">
+      <soap:operation soapAction="http://tempuri.org/ITicketFinder/GetTimePeriods" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstablisments">
+      <soap:operation soapAction="http://tempuri.org/ITicketFinder/GetEstablisments" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTicketData">
+      <soap:operation soapAction="http://tempuri.org/ITicketFinder/GetTicketData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ValidateUser">
+      <soap:operation soapAction="http://tempuri.org/ITicketFinder/ValidateUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitFile">
+      <soap:operation soapAction="http://tempuri.org/ITicketFinder/SubmitFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TicketFinder">
+    <wsdl:port name="BasicHttpBinding_ITicketFinder" binding="tns:BasicHttpBinding_ITicketFinder">
+      <soap:address location="http://192.168.10.216/TicketFinder/TicketFinderService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,81 @@
+<#@ include file="SQLServer.ttinclude" #>
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using SubSonic.DataProviders;
+using SubSonic.Extensions;
+using System.Linq.Expressions;
+using SubSonic.Schema;
+using System.Collections;
+using SubSonic;
+using SubSonic.Repository;
+using System.ComponentModel;
+using System.Data.Common;
+using SubSonic.SqlGeneration.Schema;
+
+namespace <#=Namespace #>
+{
+
+
+    public partial class DataManagerFactory : IDataManagerFactory
+    {
+        protected DataManagerFactory( )
+        {
+<#
+    var tables = LoadTables();
+
+    foreach(Table tbl in tables)
+    {
+        if(!ExcludeTables.Contains(tbl.Name))
+        {
+#>
+            m_Managers.Add(typeof(I<#=tbl.ClassName#>), new <#=tbl.ClassName#>DataManager());
+<#
+        }
+    }
+#>
+        }
+    }
+
+
+<#
+    foreach(Table tbl in tables)
+    {
+        if(!ExcludeTables.Contains(tbl.Name))
+        {
+#>
+
+// Interface
+    public interface I<#=tbl.ClassName#>DataManager : IDataManager<I<#=tbl.ClassName#>> { }
+
+// Data Manager
+	public class <#=tbl.ClassName#>DataManager : DataManager<I<#=tbl.ClassName#>, <#=tbl.ClassName#>>, I<#=tbl.ClassName#>DataManager, IDataManager
+    {
+        #region IDataManager<> Members
+
+        public IQueryable<I<#=tbl.ClassName#>> GetAll( )
+        {
+            return <#=tbl.ClassName#>.All( );
+        }
+
+        public I<#=tbl.ClassName#> Get( Guid _id )
+        {
+<#			if(tbl.PK.SysType=="Guid"){#>
+            return <#=tbl.ClassName#>.GetByID( _id );
+<#			}
+            else{#>
+            return null;
+<#			}#>
+        }
+
+        #endregion
+    }
+<#
+        }
+    }
+#>
+}

@@ -1,0 +1,112 @@
+﻿@{
+    Layout = "~/_SiteLayout.cshtml";
+    Page.Title = "Caisse";
+}
+
+@section featured {
+<section class="featured">
+    <div class="content-wrapper">
+        <hgroup class="title">
+            <h1>@Page.Title.</h1>
+        </hgroup>
+        <p>
+            To learn more about ASP.NET Web Pages, visit
+            <a href="http://asp.net/webpages" title="ASP.NET Web Pages Website">http://asp.net/webpages</a>.
+            The page features <mark>videos, tutorials, and samples</mark> to help you get the most from ASP.NET Web Pages.
+            If you have any questions about ASP.NET Web Pages, visit
+            <a href="http://forums.iis.net/1166.aspx" title="ASP.NET Web Pages Forum">our forums</a>.
+        </p>
+    </div>
+</section>
+}
+
+<table width="300px" border="1" style="border-collapse:collapse;background-color:#E8DCFF">
+    <tr>
+        <td ><input class="txt" type="text" name="cnt500" onkeyup="Sum('cnt500', 500, 'para500')" /></td>
+        <td width="60px">500</td>
+        <td ><p id="para500" /></td>
+    </tr>
+    <tr>
+        <td><input class="txt" type="text" name="cnt200" /></td>
+        <td>200</td>
+        <td><input class="txt" type="text" name="txt200" /></td>
+    </tr>
+    <tr>
+        <td><input class="txt" type="text" name="cnt" /></td>
+        <td>100</td>
+        <td><input class="txt" type="text" name="txt" /></td>
+    </tr>
+    <tr>
+        <td><input class="txt" type="text" name="cnt" /></td>
+        <td>50</td>
+        <td><input class="txt" type="text" name="txt" /></td>
+    </tr>
+    <tr>
+        <td><input class="txt" type="text" name="cnt" /></td>
+        <td>20</td>
+        <td><input class="txt" type="text" name="txt" /></td>
+    </tr>
+    <tr>
+        <td><input class="txt" type="text" name="cnt" /></td>
+        <td>10</td>
+        <td><input class="txt" type="text" name="txt" /></td>
+    </tr>
+    <tr>
+        <td><input class="txt" type="text" name="cnt" /></td>
+        <td>5</td>
+        <td><input class="txt" type="text" name="txt" /></td>
+    </tr>
+    <tr id="summation">
+        <td>&nbsp;</td>
+        <td align="right">Sum :</td>
+        <td align="center"><span id="sum">0</span></td>
+    </tr>
+</table>
+
+
+<script>
+    $(document).ready(function(){
+
+        //iterate through each textboxes and add keyup
+        //handler to trigger sum event
+        $(".cnt").each(function() {
+
+            $(this).keyup(function(){
+                calculateSum();
+            });
+        });
+
+    });
+
+    function Sum(value1, value2, value3) {
+        count = document.getElementsByName(value1).value;
+        $(value3).text(count*value2);
+    }
+
+    function calculateSum() {
+
+        var sum = 0;
+        //iterate through each textboxes and add the values
+        $(".cnt").each(function ()
+        {
+            //add only if the value is number
+            if (!isNaN(this.value) && this.value.length != 0)
+            {
+                //var txtFirstNumberValue = this.alt.value * this.value;
+                document.getElementById('cnt' + this.alt.value).value = txtFirstNumberValue;
+            }
+
+        });
+        //iterate through each textboxes and add the values
+        $(".txt").each(function () {
+
+            //add only if the value is number
+            if (!isNaN(this.value) && this.value.length != 0) {
+                sum += parseFloat(this.value);
+            }
+
+        });
+        //.toFixed() method will roundoff the final sum to 2 decimal places
+        $("#sum").html(sum.toFixed(2));
+    }
+</script>

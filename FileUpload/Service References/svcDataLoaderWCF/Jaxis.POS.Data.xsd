@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Jaxis.POS.Data" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Jaxis.POS.Data" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ArrayOfDataMicrosTimePeriod">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DataMicrosTimePeriod" nillable="true" type="tns:DataMicrosTimePeriod" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDataMicrosTimePeriod" nillable="true" type="tns:ArrayOfDataMicrosTimePeriod" />
+  <xs:complexType name="DataMicrosTimePeriod">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TimePeriodID" type="xs:int" />
+      <xs:element minOccurs="0" name="TimePeriodName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DataMicrosTimePeriod" nillable="true" type="tns:DataMicrosTimePeriod" />
+  <xs:complexType name="ArrayOfDataPOSEstablisment">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DataPOSEstablisment" nillable="true" type="tns:DataPOSEstablisment" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDataPOSEstablisment" nillable="true" type="tns:ArrayOfDataPOSEstablisment" />
+  <xs:complexType name="DataPOSEstablisment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Establishment" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EstablishmentID" type="ser:guid" />
+      <xs:element minOccurs="0" name="EstablishmentNumber" nillable="true" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DataPOSEstablisment" nillable="true" type="tns:DataPOSEstablisment" />
+  <xs:complexType name="ArrayOfDatavwPOSTicket">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DatavwPOSTicket" nillable="true" type="tns:DatavwPOSTicket" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfDatavwPOSTicket" nillable="true" type="tns:ArrayOfDatavwPOSTicket" />
+  <xs:complexType name="DatavwPOSTicket">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BusinessDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="CheckNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CustomerTable" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DessertCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="DiscountTotal" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="EntreeCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Establishment" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EstablishmentModified" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EstablishmentNumber" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GuestCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="GuestCountModified" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="POSTicketID" type="ser:guid" />
+      <xs:element minOccurs="0" name="PaymentTotal" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="PlatCount" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="RawData" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RecordType" type="xs:int" />
+      <xs:element minOccurs="0" name="Server" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ServerName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TicketDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="TicketPeriod" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TicketTotal" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TipAmount" nillable="true" type="xs:decimal" />
+      <xs:element minOccurs="0" name="TouchCount" type="xs:int" />
+      <xs:element minOccurs="0" name="TransactionType" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DatavwPOSTicket" nillable="true" type="tns:DatavwPOSTicket" />
+</xs:schema>

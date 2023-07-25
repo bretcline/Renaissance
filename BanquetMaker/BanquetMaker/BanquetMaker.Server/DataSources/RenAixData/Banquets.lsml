@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceApplication
+  Name="LightSwitchServiceApplication" xmlns="http://schemas.microsoft.com/LightSwitch/2010/xaml/model">
+  <ServiceApplication.Attributes>
+    <Partial />
+  </ServiceApplication.Attributes>
+  <EntityType
+    Name="Banquet">
+    <EntityType.Methods>
+      <EntityMethod
+        Name="Delete">
+        <EntityMethod.Attributes>
+          <Generated />
+        </EntityMethod.Attributes>
+      </EntityMethod>
+    </EntityType.Methods>
+    <EntityType.Properties>
+      <KeyProperty
+        Name="BanquetID"
+        PropertyType=":Guid">
+        <KeyProperty.Attributes>
+          <Required />
+          <NotSearchable />
+        </KeyProperty.Attributes>
+      </KeyProperty>
+      <EntityProperty
+        Name="Name"
+        PropertyType=":String">
+        <EntityProperty.Attributes>
+          <Required />
+          <MaxLength
+            Value="50" />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <EntityProperty
+        Name="CustomerName"
+        PropertyType=":String">
+        <EntityProperty.Attributes>
+          <Required />
+          <MaxLength
+            Value="50" />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <NavigationProperty
+        Name="BanquetMenus"
+        Association="FK_BanquetMenus_Banquets"
+        FromEnd="Banquets"
+        ToEnd="BanquetMenus" />
+    </EntityType.Properties>
+  </EntityType>
+  <EntityContainer
+    Name="RenAixData">
+    <EntityContainer.Attributes>
+      <Partial />
+    </EntityContainer.Attributes>
+    <EntitySet
+      Name="Banquets"
+      CanDelete="True"
+      CanInsert="True"
+      CanUpdate="True"
+      EntityType="Banquet" />
+    <QueryOperation
+      Name="Banquets_Single"
+      ReturnType="Banquet">
+      <QueryOperation.Attributes>
+        <Generated />
+        <Description
+          Value="Returns the entity whose identity is specified by the parameter(s)." />
+      </QueryOperation.Attributes>
+      <QueryOperation.FilterExpression>
+        <QueryFilterExpressionTree>
+          <BinaryExpression
+            NodeType="Equal">
+            <BinaryExpression.Left>
+              <ChainExpression>
+                <MemberExpression
+                  Member="BanquetID" />
+              </ChainExpression>
+            </BinaryExpression.Left>
+            <BinaryExpression.Right>
+              <ParameterExpression
+                Parameter="BanquetID" />
+            </BinaryExpression.Right>
+          </BinaryExpression>
+        </QueryFilterExpressionTree>
+      </QueryOperation.FilterExpression>
+      <QueryOperation.Source>
+        <QuerySourceExpressionTree>
+          <MemberExpression
+            Member="Banquets" />
+        </QuerySourceExpressionTree>
+      </QueryOperation.Source>
+      <QueryOperationParameter
+        Name="BanquetID"
+        ParameterType="Microsoft.LightSwitch:Guid?">
+        <QueryOperationParameter.Attributes>
+          <Description
+            Value="The value of the 'BanquetID' key property of the entity to retrieve." />
+        </QueryOperationParameter.Attributes>
+      </QueryOperationParameter>
+    </QueryOperation>
+    <QueryOperation
+      Name="Banquets_SingleOrDefault"
+      ReturnType="Banquet">
+      <QueryOperation.Attributes>
+        <Generated />
+        <Description
+          Value="Returns the entity whose identity is specified by the parameter(s) or null if no such entity exists." />
+      </QueryOperation.Attributes>
+      <QueryOperation.FilterExpression>
+        <QueryFilterExpressionTree>
+          <BinaryExpression
+            NodeType="Equal">
+            <BinaryExpression.Left>
+              <ChainExpression>
+                <MemberExpression
+                  Member="BanquetID" />
+              </ChainExpression>
+            </BinaryExpression.Left>
+            <BinaryExpression.Right>
+              <ParameterExpression
+                Parameter="BanquetID" />
+            </BinaryExpression.Right>
+          </BinaryExpression>
+        </QueryFilterExpressionTree>
+      </QueryOperation.FilterExpression>
+      <QueryOperation.Source>
+        <QuerySourceExpressionTree>
+          <MemberExpression
+            Member="Banquets" />
+        </QuerySourceExpressionTree>
+      </QueryOperation.Source>
+      <QueryOperationParameter
+        Name="BanquetID"
+        ParameterType="Microsoft.LightSwitch:Guid?">
+        <QueryOperationParameter.Attributes>
+          <Description
+            Value="The value of the 'BanquetID' key property of the entity to retrieve." />
+        </QueryOperationParameter.Attributes>
+      </QueryOperationParameter>
+    </QueryOperation>
+    <AssociationSet
+      Name="FK_BanquetMenus_Banquets"
+      Association="FK_BanquetMenus_Banquets">
+      <AssociationSetEnd
+        Name="Banquets"
+        EntitySet="Banquets" />
+      <AssociationSetEnd
+        Name="BanquetMenus"
+        EntitySet="BanquetMenus" />
+    </AssociationSet>
+  </EntityContainer>
+  <Association
+    Name="FK_BanquetMenus_Banquets">
+    <AssociationEnd
+      Name="Banquets"
+      Multiplicity="One"
+      EntityType="Banquet">
+      <AssociationEnd.Attributes>
+        <DeleteRule />
+      </AssociationEnd.Attributes>
+    </AssociationEnd>
+    <AssociationEnd
+      Name="BanquetMenus"
+      Multiplicity="Many"
+      EntityType="BanquetMenu" />
+  </Association>
+  <DataService
+    Name="RenAixDataDataService">
+    <DataService.Attributes>
+      <Partial />
+    </DataService.Attributes>
+    <EntitySetMapping
+      EntitySet="Banquets">
+      <EntitySetMapping.Attributes>
+        <SsdlEntitySet
+          Schema="dbo"
+          Table="Banquets" />
+        <SsdlProperty
+          Name="BanquetID"
+          Nullable="False"
+          Type="uniqueidentifier"
+          Property="Banquet/Properties[BanquetID]" />
+        <SsdlProperty
+          MaxLength="50"
+          Name="Name"
+          Nullable="False"
+          Type="nvarchar"
+          Property="Banquet/Properties[Name]" />
+        <SsdlProperty
+          MaxLength="50"
+          Name="CustomerName"
+          Nullable="False"
+          Type="nvarchar"
+          Property="Banquet/Properties[CustomerName]" />
+      </EntitySetMapping.Attributes>
+    </EntitySetMapping>
+    <AssociationSetMapping
+      AssociationSet="FK_BanquetMenus_Banquets">
+      <AssociationSetMapping.Attributes>
+        <SsdlAssociationSet
+          Name="FK_BanquetMenus_Banquets" />
+        <SsdlAssociationSetEnd
+          End="RenAixData/Members[FK_BanquetMenus_Banquets]/Members[Banquets]">
+          <SsdlAssociationSetEnd.Attributes>
+            <SsdlPropertyRef
+              Name="BanquetID" />
+          </SsdlAssociationSetEnd.Attributes>
+        </SsdlAssociationSetEnd>
+        <SsdlAssociationSetEnd
+          End="RenAixData/Members[FK_BanquetMenus_Banquets]/Members[BanquetMenus]">
+          <SsdlAssociationSetEnd.Attributes>
+            <SsdlPropertyRef
+              Name="BanquetID" />
+          </SsdlAssociationSetEnd.Attributes>
+        </SsdlAssociationSetEnd>
+      </AssociationSetMapping.Attributes>
+    </AssociationSetMapping>
+  </DataService>
+</ServiceApplication>

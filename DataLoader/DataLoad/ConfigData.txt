@@ -1,0 +1,7 @@
+﻿imp.mfd_check_ttl	C:\temp\RenAix\Opera\mfd_check_ttl.csv	|	2	true	dd.MM.yyyy
+imp.mfd_check_dtl	C:\temp\RenAix\Opera\mfd_check_dtl.csv	|	2	true	dd.MM.yyyy
+imp.dly_corr_ttl	C:\temp\RenAix\Opera\v_fr_dly_corr_ttl.csv	|	2	true	dd.MM.yyyy
+imp.dly_discount_ttl	C:\temp\RenAix\Opera\v_fr_dly_discount_ttl.csv	|	2	true	dd.MM.yyyy
+imp.v_R_kds_chk_dtl	C:\temp\RenAix\Opera\v_R_kds_chk_dtl.csv	|	2	true	dd.MM.yyyy
+imp.Micros_Tickets	C:\temp\RenAix\Opera\Micros_Tickets.csv	|	2	true	dd.MM.yyyy
+imp.Micros_Ticket_Details	C:\temp\RenAix\Opera\Micros_Ticket_Details.csv	|	2	true	dd.MM.yyyy

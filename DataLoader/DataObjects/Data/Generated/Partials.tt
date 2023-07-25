@@ -1,0 +1,61 @@
+﻿<#@ include file="SQLServer.ttinclude" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using SubSonic.DataProviders;
+using SubSonic.Extensions;
+using System.Linq.Expressions;
+using SubSonic.Schema;
+using System.Collections;
+using SubSonic;
+using SubSonic.Repository;
+using System.ComponentModel;
+using System.Data.Common;
+
+namespace <#=Namespace #>
+{
+<#
+
+    var tables = LoadTables();
+
+    foreach(Table tbl in tables)
+    {
+	    if(!ExcludeTables.Contains(tbl.Name))
+        {
+#>
+    /// <summary>
+    /// A class which represents the <#=tbl.Name #> table in the <#=DatabaseName#> Database.
+    /// </summary>
+    public interface I<#=tbl.ClassName#>
+    {
+    }
+    
+<#
+        }
+    }
+
+    foreach(Table tbl in tables)
+    {
+	    if(!ExcludeTables.Contains(tbl.Name))
+        {
+#>
+
+
+    /// <summary>
+    /// A class which represents the <#=tbl.Name #> table in the <#=DatabaseName#> Database.
+    /// </summary>
+    public partial class <#=tbl.ClassName#>: I<#=tbl.ClassName#>, IDataObject<I<#=tbl.ClassName#>>
+    {
+        public System.Linq.IQueryable<I<#=tbl.ClassName#>> GetAll( )
+        {
+            return <#=tbl.ClassName#>.All();
+        }
+    }
+    
+<#
+        }
+    }
+#>
+}

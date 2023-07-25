@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceApplication
+  Name="LightSwitchServiceApplication" xmlns="http://schemas.microsoft.com/LightSwitch/2010/xaml/model">
+  <ServiceApplication.Attributes>
+    <Partial />
+  </ServiceApplication.Attributes>
+  <EntityType
+    Name="MenuItem">
+    <EntityType.Methods>
+      <EntityMethod
+        Name="Delete">
+        <EntityMethod.Attributes>
+          <Generated />
+        </EntityMethod.Attributes>
+      </EntityMethod>
+    </EntityType.Methods>
+    <EntityType.Properties>
+      <KeyProperty
+        Name="MenuItemID"
+        PropertyType=":Guid">
+        <KeyProperty.Attributes>
+          <Required />
+          <NotSearchable />
+        </KeyProperty.Attributes>
+      </KeyProperty>
+      <EntityProperty
+        Name="Name"
+        PropertyType=":String">
+        <EntityProperty.Attributes>
+          <Required />
+          <MaxLength
+            Value="64" />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <EntityProperty
+        Name="Description"
+        PropertyType=":String">
+        <EntityProperty.Attributes>
+          <Required />
+          <MaxLength
+            Value="256" />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <EntityProperty
+        Name="Cost"
+        PropertyType=":Decimal">
+        <EntityProperty.Attributes>
+          <Required />
+          <DecimalConstraint
+            Precision="19"
+            Scale="4" />
+          <NotSearchable />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <EntityProperty
+        Name="Price"
+        PropertyType=":Decimal">
+        <EntityProperty.Attributes>
+          <Required />
+          <DecimalConstraint
+            Precision="19"
+            Scale="4" />
+          <NotSearchable />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <EntityProperty
+        Name="InsertDate"
+        PropertyType=":DateTime">
+        <EntityProperty.Attributes>
+          <Required />
+          <DateTimeConstraint
+            Precision="3"
+            PreserveSeconds="True" />
+          <NotSearchable />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <EntityProperty
+        Name="UpdateDate"
+        PropertyType=":DateTime">
+        <EntityProperty.Attributes>
+          <Required />
+          <DateTimeConstraint
+            Precision="3"
+            PreserveSeconds="True" />
+          <NotSearchable />
+        </EntityProperty.Attributes>
+      </EntityProperty>
+      <NavigationProperty
+        Name="BanquetMenus"
+        Association="FK_BanquetMenus_MenuItems"
+        FromEnd="MenuItems"
+        ToEnd="BanquetMenus" />
+    </EntityType.Properties>
+  </EntityType>
+  <EntityContainer
+    Name="RenAixData">
+    <EntityContainer.Attributes>
+      <Partial />
+    </EntityContainer.Attributes>
+    <EntitySet
+      Name="MenuItems"
+      CanDelete="True"
+      CanInsert="True"
+      CanUpdate="True"
+      EntityType="MenuItem" />
+    <QueryOperation
+      Name="MenuItems_Single"
+      ReturnType="MenuItem">
+      <QueryOperation.Attributes>
+        <Generated />
+        <Description
+          Value="Returns the entity whose identity is specified by the parameter(s)." />
+      </QueryOperation.Attributes>
+      <QueryOperation.FilterExpression>
+        <QueryFilterExpressionTree>
+          <BinaryExpression
+            NodeType="Equal">
+            <BinaryExpression.Left>
+              <ChainExpression>
+                <MemberExpression
+                  Member="MenuItemID" />
+              </ChainExpression>
+            </BinaryExpression.Left>
+            <BinaryExpression.Right>
+              <ParameterExpression
+                Parameter="MenuItemID" />
+            </BinaryExpression.Right>
+          </BinaryExpression>
+        </QueryFilterExpressionTree>
+      </QueryOperation.FilterExpression>
+      <QueryOperation.Source>
+        <QuerySourceExpressionTree>
+          <MemberExpression
+            Member="MenuItems" />
+        </QuerySourceExpressionTree>
+      </QueryOperation.Source>
+      <QueryOperationParameter
+        Name="MenuItemID"
+        ParameterType="Microsoft.LightSwitch:Guid?">
+        <QueryOperationParameter.Attributes>
+          <Description
+            Value="The value of the 'MenuItemID' key property of the entity to retrieve." />
+        </QueryOperationParameter.Attributes>
+      </QueryOperationParameter>
+    </QueryOperation>
+    <QueryOperation
+      Name="MenuItems_SingleOrDefault"
+      ReturnType="MenuItem">
+      <QueryOperation.Attributes>
+        <Generated />
+        <Description
+          Value="Returns the entity whose identity is specified by the parameter(s) or null if no such entity exists." />
+      </QueryOperation.Attributes>
+      <QueryOperation.FilterExpression>
+        <QueryFilterExpressionTree>
+          <BinaryExpression
+            NodeType="Equal">
+            <BinaryExpression.Left>
+              <ChainExpression>
+                <MemberExpression
+                  Member="MenuItemID" />
+              </ChainExpression>
+            </BinaryExpression.Left>
+            <BinaryExpression.Right>
+              <ParameterExpression
+                Parameter="MenuItemID" />
+            </BinaryExpression.Right>
+          </BinaryExpression>
+        </QueryFilterExpressionTree>
+      </QueryOperation.FilterExpression>
+      <QueryOperation.Source>
+        <QuerySourceExpressionTree>
+          <MemberExpression
+            Member="MenuItems" />
+        </QuerySourceExpressionTree>
+      </QueryOperation.Source>
+      <QueryOperationParameter
+        Name="MenuItemID"
+        ParameterType="Microsoft.LightSwitch:Guid?">
+        <QueryOperationParameter.Attributes>
+          <Description
+            Value="The value of the 'MenuItemID' key property of the entity to retrieve." />
+        </QueryOperationParameter.Attributes>
+      </QueryOperationParameter>
+    </QueryOperation>
+    <AssociationSet
+      Name="FK_BanquetMenus_MenuItems"
+      Association="FK_BanquetMenus_MenuItems">
+      <AssociationSetEnd
+        Name="MenuItems"
+        EntitySet="MenuItems" />
+      <AssociationSetEnd
+        Name="BanquetMenus"
+        EntitySet="BanquetMenus" />
+    </AssociationSet>
+  </EntityContainer>
+  <Association
+    Name="FK_BanquetMenus_MenuItems">
+    <AssociationEnd
+      Name="MenuItems"
+      Multiplicity="One"
+      EntityType="MenuItem">
+      <AssociationEnd.Attributes>
+        <DeleteRule />
+      </AssociationEnd.Attributes>
+    </AssociationEnd>
+    <AssociationEnd
+      Name="BanquetMenus"
+      Multiplicity="Many"
+      EntityType="BanquetMenu" />
+  </Association>
+  <DataService
+    Name="RenAixDataDataService">
+    <DataService.Attributes>
+      <Partial />
+    </DataService.Attributes>
+    <EntitySetMapping
+      EntitySet="MenuItems">
+      <EntitySetMapping.Attributes>
+        <SsdlEntitySet
+          Schema="dbo"
+          Table="MenuItems" />
+        <SsdlProperty
+          Name="MenuItemID"
+          Nullable="False"
+          Type="uniqueidentifier"
+          Property="MenuItem/Properties[MenuItemID]" />
+        <SsdlProperty
+          MaxLength="64"
+          Name="Name"
+          Nullable="False"
+          Type="nvarchar"
+          Property="MenuItem/Properties[Name]" />
+        <SsdlProperty
+          MaxLength="256"
+          Name="Description"
+          Nullable="False"
+          Type="nvarchar"
+          Property="MenuItem/Properties[Description]" />
+        <SsdlProperty
+          Name="Cost"
+          Nullable="False"
+          Type="money"
+          Property="MenuItem/Properties[Cost]" />
+        <SsdlProperty
+          Name="Price"
+          Nullable="False"
+          Type="money"
+          Property="MenuItem/Properties[Price]" />
+        <SsdlProperty
+          Name="InsertDate"
+          Nullable="False"
+          Type="datetime"
+          Property="MenuItem/Properties[InsertDate]" />
+        <SsdlProperty
+          Name="UpdateDate"
+          Nullable="False"
+          Type="datetime"
+          Property="MenuItem/Properties[UpdateDate]" />
+      </EntitySetMapping.Attributes>
+    </EntitySetMapping>
+    <AssociationSetMapping
+      AssociationSet="FK_BanquetMenus_MenuItems">
+      <AssociationSetMapping.Attributes>
+        <SsdlAssociationSet
+          Name="FK_BanquetMenus_MenuItems" />
+        <SsdlAssociationSetEnd
+          End="RenAixData/Members[FK_BanquetMenus_MenuItems]/Members[MenuItems]">
+          <SsdlAssociationSetEnd.Attributes>
+            <SsdlPropertyRef
+              Name="MenuItemID" />
+          </SsdlAssociationSetEnd.Attributes>
+        </SsdlAssociationSetEnd>
+        <SsdlAssociationSetEnd
+          End="RenAixData/Members[FK_BanquetMenus_MenuItems]/Members[BanquetMenus]">
+          <SsdlAssociationSetEnd.Attributes>
+            <SsdlPropertyRef
+              Name="MenuItemID" />
+          </SsdlAssociationSetEnd.Attributes>
+        </SsdlAssociationSetEnd>
+      </AssociationSetMapping.Attributes>
+    </AssociationSetMapping>
+  </DataService>
+</ServiceApplication>
